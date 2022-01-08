@@ -9,8 +9,9 @@ const container = document.createElement('div');
 main.appendChild(container);
 container.classList.add('container');
 
-const url = (city) =>
+const url = (city) => {
   `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apikey}`;
+};
 
 const convertToCelcium = (degree) => (degree - 273).toFixed(2);
 
@@ -22,22 +23,26 @@ const showWeather = (weather) => {
     `;
 };
 
-const showError = () => {
-  container.innerHTML = `<small>Cannot find such city</small>`;
-};
-
-const getWeather = async (city) => {
-  try {
-    const response = await fetch(url(city), { origin: 'cors' });
-    const responseData = await response.json();
-    showWeather(responseData);
-  } catch (e) {
-    showError(e);
-  }
+const getWeather = (city) => {
+  fetch(url(city))
+    .then((response) => {
+      return response.json();
+    })
+    .catch((error) => {
+      console.log(error);
+      container.innerHTML = `<small>Cant get weather info /n avc</small>`;
+    })
+    .then((weather) => {
+      showWeather(weather);
+    })
+    .catch((error) => {
+      console.log(error);
+      container.innerHTML = `<small>No such city</small>`;
+    });
 };
 
 form.addEventListener('submit', (e) => {
-  e.preventDefault();
   const city = search.value;
   if (city) getWeather(city);
+  e.preventDefault();
 });
