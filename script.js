@@ -10,16 +10,24 @@ main.appendChild(container);
 container.classList.add('container');
 
 const url = (city) => {
-  `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apikey}`;
+  return `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apikey}`;
+};
+
+const showInfo = (weather) => {
+  return {
+    img: `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`,
+    info: weather.weather[0].main,
+  };
 };
 
 const convertToCelcium = (degree) => (degree - 273).toFixed(2);
 
 const showWeather = (weather) => {
   const temp = convertToCelcium(weather.main.temp);
+  const show = showInfo(weather);
   container.innerHTML = `
-        <h2><img src="https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png" /> ${temp}°C <img src="https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png" /></h2>
-        <small>${weather.weather[0].main}</small>
+        <h2><img src=${show.img} /> ${temp}°C <img src=${show.img} /></h2>
+        <small>${show.info}</small>
     `;
 };
 
@@ -30,7 +38,7 @@ const getWeather = (city) => {
     })
     .catch((error) => {
       console.log(error);
-      container.innerHTML = `<small>Cant get weather info /n avc</small>`;
+      container.innerHTML = `<small>Cant get weather info</small>`;
     })
     .then((weather) => {
       showWeather(weather);
